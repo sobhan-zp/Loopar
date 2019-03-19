@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">پولار</string>
+    <string name="tv_singup">ثبت نام</string>
+    <string name="tv_username_singup">نام کاربری</string>
+    <string name="tv_pass_singup">رمز عبور</string>
+    <string name="tv_email_singup">ایمیل</string>
+    <string name="btn_singup">ثبت نام</string>
+    <string name="tv_tologing_singup">قبلا ثبت نام کرده اید؟ ورود</string>
+
+
+
+    <string name="tv_login">ورود</string>
+    <string name="tv_pass_login">رمز عبور</string>
+    <string name="tv_email_login">ایمیل</string>
+    <string name="btn_login">ورود به برنامه</string>
+    <string name="tv_tologing_login">هنوز ثبت نام نکرده ام! ثبت نام</string>
+
+
+
 </resources>

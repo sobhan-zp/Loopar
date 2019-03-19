@@ -43,7 +43,7 @@ public class FragmentHome extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
-        webview = (WebView) view.findViewById(R.id.webview);
+        webview =  view.findViewById(R.id.webview);
 
         webview.setWebViewClient(new MyBrowser());
 

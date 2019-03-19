@@ -2,6 +2,7 @@ package com.loopar.zp.Classes;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,16 +26,18 @@ public class AdapterRsShowWeb extends RecyclerView.Adapter<AdapterRsShowWeb.View
 
     private Context context;
     private List<ModelShowWeb> listwebshow;
+    private ViewPager viewPager;
 
 
     String url = "https://www.google.com/search?q=";
     public static String url1;
     String query;
 
-    public AdapterRsShowWeb(Context context, List<ModelShowWeb> listwebshow) {
+    public AdapterRsShowWeb(Context context, List<ModelShowWeb> listwebshow , ViewPager viewPager) {
 
         this.context = context;
         this.listwebshow = listwebshow;
+        this.viewPager = viewPager;
     }
 
     @NonNull
@@ -57,6 +60,7 @@ public class AdapterRsShowWeb extends RecyclerView.Adapter<AdapterRsShowWeb.View
             public void onClick(View v) {
                 Toast.makeText(context, modelShowWeb.getNameSite() + "", Toast.LENGTH_SHORT).show();
 
+                viewPager.setCurrentItem(0);
 
                 query = modelShowWeb.getNameSite();
                  url1 = url + query;

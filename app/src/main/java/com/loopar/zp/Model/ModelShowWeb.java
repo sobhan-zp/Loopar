@@ -7,6 +7,9 @@ public class ModelShowWeb {
     //private String name;
 
 
+    public ModelShowWeb() {
+    }
+
     public ModelShowWeb(String nameSite, String linkSite) {
         this.nameSite = nameSite;
         this.linkSite = linkSite;
