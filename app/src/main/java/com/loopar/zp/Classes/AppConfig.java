@@ -9,11 +9,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class AppConfig extends Application {
 
-    public static final String URL_LOGIN="";
-    public static final String URL_SIGNUP="";
-    public static final String URL_GETSITE="";
-    public static final String URL_GETUSER="";
-    public static final String URL_SENDSCORE="";
+    public static final String URL_LOGIN="http://loopaal.com/loop/api/login.php";
+    public static final String URL_SIGNUP="http://loopaal.com/loop/api/register.php";
+    public static final String URL_GETSITE="http://loopaal.com/loop/api/getSite.php";
+    public static final String URL_GETUSER="http://loopaal.com/loop/api/getUser.php";
+    public static final String URL_SENDSCORE="http://loopaal.com/loop/api/addmoney.php";
 
     public static Context context;
 

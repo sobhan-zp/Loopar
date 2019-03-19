@@ -44,5 +44,7 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
     implementation 'com.mcxiaoke.volley:library:1.0.19'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
+
+    implementation 'com.koushikdutta.async:androidasync:2.2.1'
     //implementation project(':circlerefresh')
 }

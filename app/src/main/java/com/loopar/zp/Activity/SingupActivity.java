@@ -16,6 +16,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.koushikdutta.async.http.AsyncHttpClient;
+import com.koushikdutta.async.http.AsyncHttpPost;
+import com.koushikdutta.async.http.AsyncHttpResponse;
+import com.koushikdutta.async.http.body.MultipartFormDataBody;
 import com.loopar.zp.Classes.AppConfig;
 import com.loopar.zp.Classes.SharedPrefSave;
 import com.loopar.zp.R;
@@ -89,49 +93,83 @@ public class SingupActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.btn_login:
 
-                JSONObject jsonObjectLogin = new JSONObject();
-
-                try {
-                    jsonObjectLogin.put("email" , etEmailLogin.getText().toString());
-                    jsonObjectLogin.put("password" , etPassLogin.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (etEmailLogin.getText().toString().equals("")){
+                    Toast.makeText(this, "ایمیل باید پر باشد!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                final JsonObjectRequest requestLogin = new JsonObjectRequest(Request.Method.POST, AppConfig.URL_LOGIN, jsonObjectLogin, new Response.Listener<JSONObject>() {
+                if (etPassLogin.getText().toString().equals("")){
+                    Toast.makeText(this, "رمز عبور نباید خالی باشد!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                AsyncHttpPost asyncHttpPost = new AsyncHttpPost(AppConfig.URL_LOGIN);
+                asyncHttpPost.setTimeout(18000);
+
+                MultipartFormDataBody multipartFormDataBody = new MultipartFormDataBody();
+                multipartFormDataBody.addStringPart("email",etEmailLogin.getText().toString());
+                multipartFormDataBody.addStringPart("password",etPassLogin.getText().toString());
+
+                asyncHttpPost.setBody(multipartFormDataBody);
+
+                AsyncHttpClient.getDefaultInstance().executeString(asyncHttpPost, new AsyncHttpClient.StringCallback() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onCompleted(Exception e, AsyncHttpResponse source, String result) {
                         try {
-                            if (response.getString("message").equals("no")){
-                                Toast.makeText(SingupActivity.this, "نام کاربری یا رمز عبور اشتباه است!", Toast.LENGTH_SHORT).show();
+                            JSONObject object2 = new JSONObject(result);
+
+                            if (e!=null){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(SingupActivity.this, "اتصال خود به اینترنت را برسی کنید!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
 
-                            if (response.getString("message").equals("ok")){
-                                Toast.makeText(SingupActivity.this, "خوش آمدید!", Toast.LENGTH_SHORT).show();
-                                save.save("email", etEmailLogin.getText().toString());
-                                save.save("pass" , etPassLogin.getText().toString());
-                                save.save("sign","1");
-                                startActivity(new Intent(SingupActivity.this , MainActivity.class));
-                                finish();
+                            if (object2.getString("message").equals("no")){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(SingupActivity.this, "نام کاربری یا رمز عبور اشتباه است!", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
+
                             }
 
-                            if (response.getString("message").equals("null")){
-                                Toast.makeText(SingupActivity.this, "اطلاعات کامل نیست!", Toast.LENGTH_SHORT).show();
+                            if (object2.getString("message").equals("ok")){
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(SingupActivity.this, "خوش آمدید!", Toast.LENGTH_SHORT).show();
+                                        save.save("email", etEmailLogin.getText().toString());
+                                        save.save("pass" , etPassLogin.getText().toString());
+                                        save.save("sign","1");
+                                        startActivity(new Intent(SingupActivity.this , MainActivity.class));
+                                        finish();
+                                    }
+                                });
+
                             }
-                        } catch (JSONException e) {
+
+                            if (object2.getString("message").equals("null")){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(SingupActivity.this, "اطلاعات کامل نیست!", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
+
+                            }
+                        } catch (JSONException e2) {
                             e.printStackTrace();
                         }
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
                 });
 
-
-                requestLogin.setRetryPolicy(new DefaultRetryPolicy(18000 , DefaultRetryPolicy.DEFAULT_MAX_RETRIES , DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Volley.newRequestQueue(this).add(requestLogin);
 
                 break;
 
@@ -140,61 +178,93 @@ public class SingupActivity extends AppCompatActivity implements View.OnClickLis
                 if (etUsernameSingup.getText().toString().equals("")){
                     Toast.makeText(this, "نام کاریری نباید خالی باشد!", Toast.LENGTH_SHORT).show();
                     return;
-                }else if (etEmailSingup.getText().toString().equals("")){
+                }
+                if (etEmailSingup.getText().toString().equals("")){
                     Toast.makeText(this, "ایمیل نمی تواند خالی باشد!", Toast.LENGTH_SHORT).show();
                     return;
-                }else if (etPassSingup.getText().toString().equals("")){
+                }
+                if (etPassSingup.getText().toString().equals("")){
                     Toast.makeText(this, "رمز عبور نمی تواند خالی باشد!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                JSONObject jsonObjectSignUp = new JSONObject();
-                try {
-                    jsonObjectSignUp.put("username" , etUsernameSingup.getText().toString());
-                    jsonObjectSignUp.put("email" ,   etEmailSingup.getText().toString());
-                    jsonObjectSignUp.put("password", etPassSingup.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                AsyncHttpPost asyncHttpPost1 = new AsyncHttpPost(AppConfig.URL_SIGNUP);
+                asyncHttpPost1.setTimeout(18000);
 
-                JsonObjectRequest requestSignUp = new JsonObjectRequest(Request.Method.POST, AppConfig.URL_SIGNUP, jsonObjectSignUp, new Response.Listener<JSONObject>() {
+                MultipartFormDataBody multipartFormDataBody1 = new MultipartFormDataBody();
+                multipartFormDataBody1.addStringPart("username",etUsernameSingup.getText().toString());
+                multipartFormDataBody1.addStringPart("password",etPassSingup.getText().toString());
+                multipartFormDataBody1.addStringPart("email",etEmailSingup.getText().toString());
+
+                asyncHttpPost1.setBody(multipartFormDataBody1);
+
+                AsyncHttpClient.getDefaultInstance().executeString(asyncHttpPost1, new AsyncHttpClient.StringCallback() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onCompleted(Exception e, AsyncHttpResponse source, String result) {
                         try {
-                           if (response.getString("message").equals("old_user")){
-                               Toast.makeText(SingupActivity.this, "نام کاربری وجود دارد!", Toast.LENGTH_SHORT).show();
-                           }
+                            JSONObject object = new JSONObject(result);
 
-                           if (response.getString("message").equals("ok")){
-                               Toast.makeText(SingupActivity.this, "خوش آمدید!", Toast.LENGTH_SHORT).show();
-                               save.save("username" , etUsernameSingup.getText().toString());
-                               save.save("email" , etEmailSingup.getText().toString());
-                               save.save("pass" , etPassSingup.getText().toString());
-                               save.save("sign","1");
-                               startActivity(new Intent(SingupActivity.this , MainActivity.class));
-                               finish();
-                           }
+                            try {
+                                if (object.getString("message").equals("old_user")){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SingupActivity.this, "نام کاربری وجود دارد!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
 
-                           if (response.getString("message").equals("no")){
-                               Toast.makeText(SingupActivity.this, "لطفا چند لحضه ی دیگر امتحان کنید!", Toast.LENGTH_SHORT).show();
-                           }
+                                }
 
-                           if (response.getString("message").equals("null")){
-                               Toast.makeText(SingupActivity.this, "اطلاعات کافی نیست!", Toast.LENGTH_SHORT).show();
-                           }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                                if (object.getString("message").equals("ok")){
+
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SingupActivity.this, "خوش آمدید!", Toast.LENGTH_SHORT).show();
+                                            save.save("username" , etUsernameSingup.getText().toString());
+                                            save.save("email" , etEmailSingup.getText().toString());
+                                            save.save("pass" , etPassSingup.getText().toString());
+                                            save.save("sign","1");
+                                            startActivity(new Intent(SingupActivity.this , MainActivity.class));
+                                            finish();
+                                        }
+                                    });
+
+                                }
+
+                                if (object.getString("message").equals("no")){
+
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SingupActivity.this, "لطفا چند لحضه ی دیگر امتحان کنید!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+
+                                }
+
+                                if (object.getString("message").equals("null")){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SingupActivity.this, "اطلاعات کافی نیست!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                }
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
+
+
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(SingupActivity.this, "لطفا اتصال خود به اینترنت را برسی کنید!", Toast.LENGTH_SHORT).show();
+
                     }
                 });
 
-                requestSignUp.setRetryPolicy(new DefaultRetryPolicy(18000 , DefaultRetryPolicy.DEFAULT_MAX_RETRIES , DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                Volley.newRequestQueue(this).add(requestSignUp);
                 break;
         }
     }

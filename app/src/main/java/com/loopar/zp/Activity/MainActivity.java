@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupBody() {
         AdapterViewPager adapterViewPager = new AdapterViewPager(getSupportFragmentManager(), fragmentList());
         viewPager.setAdapter(adapterViewPager);
-        viewPager.setCurrentItem(0);
+        viewPager.setCurrentItem(2);
         viewPager.setPageTransformer(true, new RotateUpTransformer());
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
